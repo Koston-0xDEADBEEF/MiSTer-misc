@@ -1,0 +1,262 @@
+Joystick Check v1.05
+====================
+
+Contents
+--------
+ 1: Overview
+ 2: Quick start
+ 3: General information about joysticks
+ 4: Calibration for programs without build in calibration
+ 5: Calibration for programs with build in calibration
+ 6: Joystick problems
+ 7: Advanced joystick and flightstick
+ 8: Use of two joysticks
+ 9: Autofire
+10: How to read the screen
+11: Contact information
+
+
+1: Overview
+-----------
+This program can be used to test and calibrate joysticks.
+Both joysticks are read simultaneously, this makes it possible to
+check advanced joysticks, flightsticks and dual joystick
+configurations.
+
+When using joysticks there are two kind of calibrations, joystick
+hardware calibration and software calibration. This program is
+designed to assist in hardware calibration, this is typically done
+with some levers on the joystick.
+
+
+2: Quick start
+--------------
+This program can be used to test one or two joysticks.
+
+The program can be used to test different calibrations and see how the
+joystick responds.
+
+Test without calibration:
+
+  Press F4 and select one of the types 1 to 7, this gives a standard
+  calibration (Same as without calibration). Adjust trimmers on joystick
+  until marker is centered when joystick is centered. Move joystick
+  around, if the joystick can cover all of the green area and can't be
+  moved into the red area, the calibration is ok for program without
+  calibation routins.
+
+Test with one point calibration:
+
+  Press F4 and select one of the types 1 to 7, this gives a standard
+  calibration (Same as without calibration). Press I and J for joystick
+  1 or K and L for joystick 2.  Move joystick around, if the joystick
+  can cover all of the green area and can't be moved into the red area,
+  the calibration is ok.
+
+Test with two point calibration:
+
+  This can be done two ways:
+
+  A:  Move joystick to upper left and press 1 for joystick 1 (3 for
+      joystick 2), then move joystick to lower right and press 2 for
+      joystick 1 (4 for joystick 2).
+      Center joystick, marker must now be centered.
+  B:  Move joystick to left and press A, then move joystick to top and
+      press B, the move joystick to right and press C, and last move
+      joystick to bottom and press D (This is for joystick 1, use EFGH
+      for joystick 2).
+      Center joystick, marker must now be centered.
+
+Test with three point calibration:
+
+  Do a two point calibration (either way can be used) and then center
+  joystick and press IJ (for joystick 1, use KL for joystick 2).
+
+Problems:
+
+  When using one joystick there are 3 different problems that can affect
+  the operation of the joystick.
+
+  1:    Joystick is off center when doing a two point calibration and/or
+        joystick is very sensitive in one direction when doing a tree
+        point calibration.
+        This problem can usual be solved with the trimmers on the
+        joystick. Press SPACE and adjust the trimmers until the marker
+        is centered.
+
+  2:    Joystick moves out into the red area when doing a one point
+        calibration.
+        This is either due to a speed adjustable game card or a joystick
+        with non-standard readings. When used with program that does two
+        or tree point calibrations, this is acceptable. But when using
+        with programs without calibration the only solution is a speed
+        adjustable game card and adjust it until the readings are
+        acceptable.
+
+  3:    All other problems: unstable operation, or no joystick at all.
+        This is usual a hardware problem, this includes broken cables,
+        defect joysticks, two gamecards in the computer (One on the
+        soundcard, one one the multiio-card or motherboard)
+
+   With two joystick the most common problem is using two advanced
+   joystick. The easy way to see if a advanced joystick is to test
+   one at a time as joystick 1, if any button or marker shows up on
+   joystick 2 in the testprogram this joystick can NOT be used together
+   with other joysticks, it is TWO joysticks in one.
+
+
+3: General information about joysticks
+--------------------------------------
+A PC can be equipped with one or two joystick, each with two buttons
+and possible a autofire options. These joysticks are usual equipped
+with a calibrations lever.
+
+Joystick with more than two buttons or other functions uses both
+joystick channels on the computer. For this reason they can not be
+used together with other joysticks.
+
+This program uses the orginal IBM specifications for joysticks, these
+says that a joystick changes from 0Kohm to 100Kohm with 50Kohm at
+center, giving a readout of 24uSec to 1124uSec with 574 uSec at
+center. But the tolerances are huge making calibrations mandatory.
+
+
+4: Calibration for programs without build in calibration
+--------------------------------------------------------
+Some programs is not equipped with joystick calibrations routines,
+they expect a standard calibrated joystick. To get this standard
+calibrations:
+
+  Select standard calibration by pressing SPACE
+
+  Move the calibration levers until the marker centered.
+
+  Check if the marker can be moved to all parts of the green area and
+  partial into the brown area. If the marker can be moves out into
+  the red area or does not cover the green area then this joystick is
+  unfit for use with programs without calibration routines.
+
+
+This calibrations will NOT work for programs that can't compensate
+for fast computers in the joystick readings.
+
+
+5: Calibration for programs with build in calibration
+-----------------------------------------------------
+To get the best responce from the joystick it must be calibrated
+before use:
+
+  Move joystick to upper left and press 1
+
+  Move joystick to lower rigth and press 2
+
+  Center joystick, now the marker must be within the gray area, if
+  not then adjust with the calibration levers.
+
+  Repeat the process until the marker centers after software
+  calibration with 1 & 2.
+
+  It is now possible to move the marker inside the green area and
+  some of the brown area, but the marker can not be moves into the
+  red area. This is the optimal calibrations.
+
+
+6: Joystick problems
+--------------------
+  Two joysticks ports, one on the multi I/O card and one on the
+  soundcard. One of the ports must be disabled. Check the manuals,
+  or sometime the text on the card, on how to disable the joystick
+  input on one of the cards.
+
+  The joystick ports is disabled. In a computer with two joysticks
+  ports only one of them is supposed to work, the other must be
+  disabled.
+
+  Joystick is centered, but the games still moves, even after a
+  calibration. This is because the hardware calibration of the
+  joystick is wrong. Do a new hardware calibration (3)
+
+  When using two joysticks one or both does strange things. This is
+  usual because one or both joysticks are advanced joysticks. When
+  using two joysticks only simple joysticks can be used (or a special
+  cable that disabled the advanced facilities must be used).
+
+  The fire buttons fires multiple times.
+  This can be because: The joystick has autofire enabled
+                       A bad firebutton (worn out)
+                       The program can be very sensitive
+
+
+7: Advanced joystick and flightstick
+------------------------------------
+The joysticks is equipped with more than two fire buttons and
+possible som other functions. These joysticks uses both joystick
+inputs in the connector. This prevent the use of two joysticks
+because an advance joysticks IS two joysticks in one!
+
+Usual a advanced joysticks uses the following functions:
+  Stick              -> Joystick #1 Stick
+  Fire #1            -> Joystick #1 Fire #1
+  Fire #2            -> Joystick #1 Fire #2
+  Fire #3            -> Joystick #2 Fire #1
+  Fire #4            -> Joystick #2 Fire #2
+  Other functions    -> Joystick #2 Stick
+
+Devices like accelerator, steering wheel, throttle and rudders  will
+usual use one of the stick directions. But one some advanced
+joysticks the can also map to keys.
+
+
+8: Use of two joysticks
+-----------------------
+Most joysticks ports on a PC is designed to accept two joysticks.
+Only a Y-cable is required for connection of two joysticks.
+
+When using two joystick, both has to be simple joysticks (Only two
+fire buttons and no other functions). When using advanced joysticks
+they will usual affect each other.
+
+Do NOT mount two joystick ports on the computer, this will not work.
+If the joystick port only support one joystick then it must be
+replaced.
+
+
+9: Autofire
+-----------
+Many joysticks are equipped with autofire, this function makes the
+joysticks press the fire button multiple times when it is held down
+(This does not make the joystick an advanced joystick).
+
+Autofire can give problems when using the joystick to select options,
+each press on the fire button is perceived as multiple presses.
+
+To check autofire, hold down the button. The button circle will flash
+and a number will show how fast the autofire is, keep the button down
+for some seconds to get a stable reading.
+
+Only enable autofire if it is required in the game. Most games have a
+build in autofire ability.
+
+
+10: How to read the screen
+--------------------------
+The two squares are the two joysticks, when a stick is connected a
+yellow circle with a cross will be shown this is the marker.
+
+The green circles are the fire buttons, when a fire buttons is
+pressed the circle will change to red.
+
+The numbers are actual values and the actuel calibration.
+
+The letters and numbers in the red part of the joystick area are used
+for calibration, move the joystick fully in the direction of the
+letter/number and press it.
+
+
+11: Contact information
+-----------------------
+There is NO registration for this program. If your have any comments
+about the program, mail them to me.
+
+Henrik K. Jensen
+hkj@login.dknet.dk
