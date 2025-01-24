@@ -1,3 +1,5 @@
+![](shell_session.png)
+
 # Configuration files etc. for MiSTer shell
 
 I've created a persistent faux-HOME for root in `/media/fat/rhome`. Anything
