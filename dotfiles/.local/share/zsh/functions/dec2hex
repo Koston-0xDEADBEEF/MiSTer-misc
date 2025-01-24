@@ -1,0 +1,3 @@
+emulate -L zsh
+
+print "obase=16; $1" | bc

@@ -1,0 +1,3 @@
+emulate -L zsh
+
+print "ibase=16; ${(U)1#0x}" | bc

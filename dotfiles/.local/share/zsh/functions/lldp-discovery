@@ -1,0 +1,9 @@
+# Query LLDP information on target NIC using tcpdump(1)
+
+emulate -L zsh
+
+[[ -z $1 ]] && { print "Usage: $0 <interface>" ; return 1 }
+local _tcpdump=$(which tcpdump) || { print $_tcpdump ; return 1 }
+local _ifconfig=$(which ifconfig) || { print $_ifconfig ; return 1 }
+local _inet=$($_ifconfig $1) || { print $_inet ; return 1 }
+$_tcpdump -v -s 1500 -c 1 -i $1 '(ether[12:2]=0x88cc)'

@@ -1,0 +1,16 @@
+#compdef solarized_colormap solarized_ls
+
+case $service in
+    solarized_colormap)
+        _arguments \
+            '(-b)-b[Print standard foreground colors (0-7) in bold]' \
+            '(-B)-B[Print aixterm extension foreground colors (8-15) in bold]' \
+            '(-h)-h[Help]'
+        ;;
+    solarized_ls)
+        _arguments \
+            '(-d)-d[Print system default coloscheme instead of current $LSCOLORS]' \
+            '(-g)-g[Print a matching $LS_COLORS for GNU tools]' \
+            '(-h)-h[Help]'
+        ;;
+esac

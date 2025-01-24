@@ -1,0 +1,20 @@
+# Simple url encoder function
+#
+# Implement same basic semantics as Python's urllib.parse.quote() function:
+#
+# > Letters, digits, and the characters '_.-~' are never quoted. By default,
+# > this function is intended for quoting the path section of a URL.
+#
+# This means encode everything except unreserved characters from RFC3986
+# *or* slash (/).
+
+emulate -L zsh
+
+setopt EXTENDED_GLOB
+
+# Set by backreference glob (#b), and since they get set for each character to
+# encode, option WARN_NESTED_VAR will complain loudly if they're not declared local.
+local match mbegin mend
+# Split input into an array of single characters
+local input=(${(s::)1})
+print ${(j::)input/(#b)([^A-Za-z0-9_.~\-\/])/%${(l:2::0:)$(([##16]#match))}}

@@ -1,0 +1,16 @@
+# Pretty-print mount(1) output
+
+emulate -L zsh
+
+#autoload -Uz solarized && solarized
+local i=1
+mount | column -t | while read x
+do
+    x=${(r:$COLUMNS:: :)x}
+    if (( $(( i % 2 )) == 0 )) ; then
+        printf '%s\n' $S_normal$x
+    else
+        printf '%s\n' $S_bg[base02]$x
+    fi
+    (( i++ ))
+done

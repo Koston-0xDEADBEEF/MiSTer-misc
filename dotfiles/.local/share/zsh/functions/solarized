@@ -1,0 +1,357 @@
+# Initialize associative arrays with named solarized colors in different formats
+#
+# This assumes the terminal in use is already configured properly to use the
+# Solarized color scheme. 16-color capability is always assumed, but additional
+# RGB value arrays are populated for use in 24-bit TrueColor supporting terminals.
+#
+# Functions and arrays are meant to complement the existing colors function, not
+# override any of it.
+
+emulate -L zsh
+
+typeset -Ag S_color S_colour S_color_num S_colour_num
+typeset -Ag S_color_rgb S_colour_rgb S_color_rgb_dec S_colour_rgb_dec
+
+# Standard ANSI codes with aixterm 16-color extension (codes 90-97, 100-107)
+# but names adjusted to match those of solarized colorscheme and only commonly
+# used included.
+
+S_color=(
+# Attribute codes:
+    00 none
+    01 bold
+    02 faint                  22 normal
+    03 italic                 23 no-italic
+    04 underline              24 no-underline
+    05 blink                  25 no-blink
+    07 reverse                27 no-reverse
+    08 conceal                28 no-conceal
+    38 setfg                  48 setbg
+
+  # Text color codes
+    30 base02                 40 bg-base02
+    31 red                    41 bg-red
+    32 green                  42 bg-green
+    33 yellow                 43 bg-yellow
+    34 blue                   44 bg-blue
+    35 magenta                45 bg-magenta
+    36 cyan                   46 bg-cyan
+    37 base2                  47 bg-base2
+    39 default                49 bg-default
+
+  # aixterm bright color extensions
+    90 base03                100 bg-base03
+    91 orange                101 bg-orange
+    92 base01                102 bg-base01
+    93 base00                103 bg-base00
+    94 base0                 104 bg-base0
+    95 violet                105 bg-violet
+    96 base1                 106 bg-base1
+    97 base3                 107 bg-base3
+)
+
+
+# Solarized RGB values. Please note that these will *NOT* work correctly if
+# terminal doesn't support 24-bit TrueColor rendering. A 256-color terminal
+# will produce approximations, which are not even close to what they should be.
+#
+# use wherever idk
+S_color_rgb=(
+	"#b58900"	yellow
+	"#cb4b16"	orange
+	"#dc322f"	red
+	"#d33682"	magenta
+	"#6c71c4"	violet
+	"#268bd2"	blue
+	"#2aa198"	cyan
+	"#859900"	green
+	"#002b36"	base03
+	"#073642"	base02
+	"#586e75"	base01
+	"#657b83"	base00
+	"#839496"	base0
+	"#93a1a1"	base1
+	"#eee8d5"	base2
+	"#fdf6e3"	base3
+)
+
+# Solarized RGB values in decimal. These can be used with ISO 8613-6 defined
+# attribute codes 38 and 48 for setting foreground and background color with
+# RGB values. Set green fg:
+#   % printf '\e[38;2;%sm' $S_color_rgb_dec[green]
+S_color_rgb_dec=(
+    "181;137;000"   yellow
+    "203;075;022"   orange
+    "220;050;047"   red
+    "211;054;130"   magenta
+    "108;113;196"   violet
+    "038;139;210"   blue
+    "042;161;152"   cyan
+    "133;153;000"   green
+    "000;043;054"   base03
+    "007;054;066"   base02
+    "088;110;117"   base01
+    "101;123;131"   base00
+    "131;148;150"   base0
+    "147;161;161"   base1
+    "238;232;213"   base2
+    "253;246;227"   base3
+)
+
+# Color numbers mapping for 256-color numbering system:
+#   0- 7: standard colors (as in ESC [ 30–37 m)
+#   8-15: bright colors (as in ESC [ 90–97 m)
+S_color_num=()
+for k in {30..37} {90..97} ; S_color_num+=(${#S_color_num} $S_color[$k])
+
+# Map in both directions; could do this with e.g. ${(k)colors[(i)normal]},
+# but it's clearer to include them all both ways.
+for k in ${(k)S_color} ; S_color[${S_color[$k]}]=$k
+for k in ${(k)S_color_rgb} ; S_color_rgb[${S_color_rgb[$k]}]=$k
+for k in ${(k)S_color_rgb_dec} ; S_color_rgb_dec[${S_color_rgb_dec[$k]}]=$k
+for k in ${(k)S_color_num} ; S_color_num[${S_color_num[$k]}]=$k
+
+# Add "fg-" keys for all the text colors, for clarity.
+for k in ${S_color[(I)[39][0-7]]} ; S_color[fg-${S_color[$k]}]=$k
+
+S_colour=(${(kv)S_color})
+S_colour_rgb=(${(kv)S_color_rgb})
+S_colour_rgb_dec=(${(kv)S_color_rgb_dec})
+S_colour_num=(${(kv)S_color_num})
+
+# The following are terminal escape sequences used by colored prompt themes.
+local lc=$'\e[' rc=m	# Standard ANSI terminal escape values
+
+# Foreground
+typeset -AHg S_fg S_fg_bold S_fg_underline S_fg_italic
+for k in ${(k)S_color[(I)fg-[^(default)]*]}; do
+    S_fg[${k#fg-}]="$lc${S_color[$k]}$rc"
+    S_fg[${S_color[$k]}]=$S_fg[${k#fg-}]
+    S_fg_bold[${k#fg-}]="$lc${S_color[bold]};${S_color[$k]}$rc"
+    S_fg_bold[${S_color[$k]}]=$S_fg_bold[${k#fg-}]
+    S_fg_underline[${k#fg-}]="$lc${S_color[underline]};${S_color[$k]}$rc"
+    S_fg_underline[${S_color[$k]}]=$S_fg_underline[${k#fg-}]
+    S_fg_italic[${k#fg-}]="$lc${S_color[italic]};${S_color[$k]}$rc"
+    S_fg_italic[${S_color[$k]}]=$S_fg_italic[${k#fg-}]
+done
+
+# Background
+typeset -AHg S_bg
+for k in ${(k)S_color[(I)bg-[^(default)]*]}; do
+    S_bg[${k#bg-}]="$lc${S_color[$k]}$rc"
+    S_bg[${S_color[$k]}]=$S_bg[${k#bg-}]
+done
+unset k
+
+# Non-color attributes
+typeset -Hg S_blink="$lc${S_color[blink]}$rc"
+typeset -Hg S_bold="$lc${S_color[bold]}$rc"
+typeset -Hg S_italic="$lc${S_color[italic]}$rc"
+typeset -Hg S_underline="$lc${S_color[underline]}$rc"
+typeset -Hg S_reverse="$lc${S_color[reverse]}$rc"
+
+# Remove all attributes
+typeset -Hg S_normal="$lc${S_color[none]}$rc"
+
+# For completeness
+typeset -Hg S_no_blink="$lc${S_color[no-blink]}$rc"
+typeset -Hg S_no_bold="$lc${S_color[no-bold]}$rc"
+typeset -Hg S_no_italic="$lc${S_color[no-italic]}$rc"
+typeset -Hg S_no_underline="$lc${S_color[no-underline]}$rc"
+typeset -Hg S_no_reverse="$lc${S_color[no-reverse]}$rc"
+
+# Display a color picker map of all 16 color combinations, with options to
+# reproduce common handicaps different programs have.
+solarized_colormap() {
+    emulate -L zsh
+
+    # Yes, this heathen blasphemer loads the stock 'colors' function
+    autoload -Uz colors && colors
+
+    local fgbold fgaixbold help
+    # From zsh/zutil module, expected to be loaded dynamically
+    zparseopts -D -F -K - b=fgbold B=fgaixbold h=help
+
+    (( $? != 0 )) && {
+        print "Usage: $0 [-b] [-B] [-h]"
+        print "    -b   Print standard foreground colors (0-7) in bold"
+        print "    -B   Print aixterm extension foreground colors (8-15) in bold"
+        print "    -h   Help"
+        return
+    }
+
+    [[ -n $help ]] && {
+        cat << EOF
+Crash course into (Solarized) UNIX terminal colors
+==================================================
+
+Basics
+------
+UNIX terminal colors are divided to standard ANSI colors (0-7) and aixterm
+extension colors (8-15) commonly referred to as "bright" or "intense" colors.
+
+These colors are used in terminal by their ANSI escape sequence numbers 30-37
+and 90-97, like so:
+
+  % printf '\e[31m%s\n' "This text is red"
+
+Corresponding to same colours are background escape sequences 40-47 and
+100-107, which can be combined with foreground colors:
+
+  % printf '\e[31;44m%s\n' "This text is red on blue background"
+
+Finally, there are some non-color attributes to further change how text is
+printed; Italics, underscore, reverse.. but most importantly, bold:
+
+  % printf '\e[1;34;41m%s\n' "This text is bold blue on red background"
+
+
+Solarized
+---------
+It has been up to the terminal, or terminal emulator, to decide how to
+implement the various ANSI escape sequences. Colors in particular have
+traditionally been widely implemented, but unpleasantly rough to look at:
+
+  https://en.wikipedia.org/wiki/ANSI_escape_code#3-bit_and_4-bit
+
+Since modern terminal emulators can be configured, we can also alter the
+palette. Solarized is a palette designed to be comfortable to look at, for long
+periods of time.
+
+For programs only using the first eight colours, this is purely beneficial. The
+challenge is, most of the "bright" colors (8-15) in Solarized palette are
+changed to grayscale colors, so programs using them need special support for
+the Solarized palette, otherwise they won't look quite right.
+
+Find configuration files to make your terminal emulator produce Solarized
+palette. Probably, Solarized repository already has them.
+
+
+Shuddup, Hudson
+---------------
+What I've been doing is modifying existing programs' colorschemes to reproduce
+as closely as possible what they were originally intended as, but to suit the
+less retina-burning Solarized palette. Most likely they are less comfortable to
+look at than actually Solarized-designed colorschemes, but I grew up looking at
+them, so I choose to continue looking at them, just more comfortably.
+
+
+Game Over, Man
+--------------
+Unfortunately, it doesn't end here. Due to historical reasons, most terminals
+by default render bold fonts in bright colors. Sometimes, programs themeselves
+enforce similar restrictions. In fact, if you have the priviledge of working
+solely with 24-bit capable terminals and programs - I suggest you do so. You
+still always have the option to use a fallback Solarized palette.
+
+In practice, I suggest doing both. The first 16 colors will always remain as a
+fallback.
+
+And remember to pay your respects to Ethan Schoonover, author of Solarized.
+Without his work, we'd still be staring in the sun every day of our coding
+lives.
+EOF
+        return
+    }
+
+    # Draw title rows, bg logical color numbers and matching ANSI escape sequence numbers
+    print -n ${(l:6:: :)} ; for bg in {0..15} ; print -n "${(l:4:)bg}" ; print
+    print -n ${(l:6:: :)} ; for bg in 4{0..7} 10{0..7} ; print -n "${(l:4:)bg}" ; print
+
+    # Draw rows 0-7, standard foreground colors
+    for fg in 3{0..7} ; do
+        # Print color number and its ANSI escape sequence number
+        print -n "${(l:3:)fg#3} $fg"
+        for bg in 4{0..7} 10{0..7} ; do
+            # Print standard foreground colors (30-37) in bold. This is useful
+            # for testing, if terminal is configured to display bold text in
+            # bright (this is commonly the default)
+            (( ${#fgbold} )) \
+                && print -n $S_fg_bold[$fg] $S_bg[$bg]xxx$S_normal \
+                || print -n $S_fg[$fg] $S_bg[$bg]xxx$S_normal
+        done
+        # Print solarized name of used foreground color at the end of each row
+        print " ${(r:7:)S_color[$fg]} $color[$fg]"
+    done
+
+    # Same as above but for rows 8-15, aixterm extension (bright) colors
+    for fg in 9{0..7} ; do
+        print -n "${(l:3:)$(( ${fg%?}-1+${fg#?} ))} $fg"
+        for bg in 4{0..7} 10{0..7} ; do
+            (( ${#fgaixbold} )) \
+                && print -n $S_fg_bold[$fg] $S_bg[$bg]xxx$S_normal \
+                || print -n $S_fg[$fg] $S_bg[$bg]xxx$S_normal
+        done
+        print " ${(r:7:)S_color[$fg]} bright$color[${fg/9/3}]"
+    done
+}
+
+solarized_ls() {
+    emulate -L zsh
+
+    local def=1 gnu=1 help
+    zparseopts -D -F -K - d=def g=gnu h=help
+
+    (( $? != 0 )) || [[ -n $help ]] && {
+        print "Usage: $0 [-d] [-g] [-h]"
+        print "    -d   Print system default colorscheme instead of current \$LSCOLORS"
+        print "    -g   Print a matching \$LS_COLORS for GNU tools"
+        print "    -h   This help"
+        return 0
+    }
+
+    local line=${(r:58::=:)}    # Draw a line by right-padding a zero-length string
+    print $line
+
+    # Default from ls(1) manual
+    (( ! $def )) || [[ -z $LSCOLORS ]] && local LSCOLORS='exfxcxdxbxegedabagacad'
+    print "LSCOLORS='$LSCOLORS'"
+    print $line
+
+    local -a ftypes=("di" "directory"
+                     "ln" "symbolic link"
+                     "so" "socket"
+                     "pi" "pipe"
+                     "ex" "executable"
+                     "bd" "block special"
+                     "cd" "character special"
+                     "su" "executable with setuid bit set"
+                     "sg" "executable with setgid bit set"
+                     "tw" "directory writable to others, with sticky bit"
+                     "ow" "directory writable to others, without sticky bit")
+
+    local f b col _tdir=$(mktemp -d) ; mkdir $_tdir/xxx
+    for f b in {1..22} ; do
+        print -n "${(r:48:)ftypes[$b]} "
+        col=${(j::)${(s::)LSCOLORS}[$f,$b]}
+        print -n " :$col: "
+        LSCOLORS="${col}xxxxxxxxxxxxxxxxxxxxx" ls -G $_tdir
+
+        if (( ${#${${(s::)LSCOLORS}[$b]}#[A-H]} == 0 )) ; then
+            print " !! Background set to a bold color - this is probably an error"
+        fi
+    done
+    rm -rf $_tdir ; print $line
+
+    # A makeshift array for matching BSD ls color values to GNU ls
+    #
+    # Since BSD ls only supports 3-bit palette, same limitation is
+    # imposed for conversion so the resulting colorschemes match.
+    #
+    local -A colmap=(a    "30" b    "31" c    "32" d    "33"
+                     e    "34" f    "35" g    "36" h    "37"
+                     A "01;30" B "01;31" C "01;32" D "01;33"
+                     E "01;34" F "01;35" G "01;36" H "01;37" x "00")
+
+    if (( ! $gnu )) ; then
+        print -n "LS_COLORS='rs=0:"
+        for f b in {1..22} ; do
+            print -n "${ftypes[$f]}="
+            print -n "${colmap[${${(s::)LSCOLORS}[$f]}]}"
+            local bgc="${colmap[${(L)${(s::)LSCOLORS}[$b]}]}"
+            [[ $bgc != "00" ]] && print -n ";$(($bgc+10)):" || print -n ":"
+        done
+        print "'"
+        print $line
+    fi
+}

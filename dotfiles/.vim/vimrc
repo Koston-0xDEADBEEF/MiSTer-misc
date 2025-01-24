@@ -1,0 +1,324 @@
+" To setup on new host:
+"
+" 1) Copy this configuration to ~/.vimrc
+" 2) % git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+" 3) % vim +PluginInstall +qall
+
+
+""" Start of Vundle plugin loader config
+
+" Don't include vi compatibility
+set nocompatible    " required
+filetype off        " required
+
+" set the runtime path to include Vundle and initialize
+" Enable filetype detection, required
+filetype plugin indent on
+
+""" User settings
+
+" Don't highlight syntax within comments. I really wish there was
+" a global define for this.
+for fukssake in ["c", "chill", "jam", "rc", "sl", "groovy", "vera", "java", "wsml", "d", "openroad"]
+if exists (fukssake . "_comment_strings")
+  exec "unlet " fukssake . "_comment_strings"
+endif
+endfor
+unlet fukssake
+
+" Tab configuration. See discussion in ':h ts'; this configuration
+" sets tabs to four spaces by default and always expands them.
+set tabstop=4       " tab width is 4
+set softtabstop=4   " tab size when insterting/pasting
+set shiftwidth=4    " number of spaces to use for autoindenting
+set expandtab       " expand tabs to spaces
+" use multiple of shiftwidth when indenting with '<' and '>'
+set shiftround
+
+" Not sure about this one..
+set autoindent
+set copyindent
+set smartindent
+" Don't automatically place # on the beginning of line
+inoremap # X#
+
+" Filetype specific settings/overrides
+au FileType vim set ts=2 sts=2 shiftwidth=2 expandtab
+au FileType text set textwidth=78
+au FileType make set noexpandtab shiftwidth=8 softtabstop=0 tabstop=8
+
+" Custom Zsh functions
+au BufRead,BufNewFile ~/.local/share/zsh/functions/* set filetype=zsh
+
+" Standard Zsh functions
+au BufRead,BufNewFile /usr/share/zsh/*/functions/**/* set filetype=zsh
+au BufRead,BufNewFile /usr/local/share/zsh/*/functions/**/* set filetype=zsh
+au BufRead,BufNewFile /opt/local/share/zsh/*/functions/**/* set filetype=zsh
+
+au BufRead,BufNewFile *.mra set filetype=xml
+
+"set modelines=0     " Security hazard
+set modeline
+set number          " Show line numbers on the left
+
+" Highlight current line number only, no underline
+set cursorline
+set cursorlineopt=number
+
+" Use ack instead of grep (uncomment when ready)
+" set grepprg=ack
+" set grepformat=%f:%l:%m
+
+" syntax highlight syncing
+"let c_minlines=500
+
+" Better buffer management - hide buffers instead of closing them
+" https://medium.com/usevim/vim-101-set-hidden-f78800142855
+"set hidden
+
+" Search Settings
+set ignorecase  " case insensitive search
+set smartcase   " If a capital letter is included in search, make it case-sensitive
+set hlsearch    " Highlight matches
+
+set visualbell    " don't beep
+set noerrorbells  " don't beep
+
+" Auto read when a file is changed on disk
+set autoread
+
+" Always show status line
+set laststatus=2
+
+" Moving up and down wrapped lines
+nnoremap j gj
+nnoremap k gk
+
+" Switch windows without Ctrl-W prefix
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
+map <C-h> <C-w>h
+
+" Resize in steps of 4 by default
+map <C-w>< <C-w>4<
+map <C-w>+ <C-w>4+
+map <C-w>- <C-w>4-
+map <C-w>> <C-w>4>
+
+" Ctrl-P unsets search highlights in addition to redrawing screen
+nnoremap <silent><C-p> :nohl<CR>
+
+set backup      " keep a backup file (restore to previous version)
+set undofile    " keep an undo file (undo changes after closing)
+if has('nvim')
+  set backupdir=~/.local/state/nvim/backup
+  set undodir=~/.local/state/nvim/undo
+  set directory=~/.local/state/nvim/swap
+else
+  set backupdir=~/.local/state/vim/backup
+  set undodir=~/.local/state/vim/undo
+  set directory=~/.local/state/vim/swap
+endif
+
+" For all text files set 'textwidth' to 78 characters.
+
+" The matchit plugin makes the % command work better, but it is not backwards
+" compatible.
+" The ! means the package won't be loaded right away but when plugins are
+" loaded during initialization.
+"packadd! matchit
+
+" Allow backspacing over everything in insert mode.
+set backspace=indent,eol,start  " Default in neovim
+
+set history=200     " keep 200 lines of command line history (instead of 20)
+set ruler           " show the cursor position all the time
+set showcmd         " display incomplete commands
+set wildmenu        " display completion matches in a status line
+
+set ttimeout        " time out for key codes
+set ttimeoutlen=100 " wait up to 100ms after Esc for special key
+
+" Show @@@ in the last line if it is truncated.
+set display=truncate
+
+" Show a few lines of context around the cursor.  Note that this makes the
+" text scroll if you mouse-click near the start or end of the window.
+set scrolloff=5
+
+set incsearch       " show search matches as you type
+
+" Do not recognize octal numbers for Ctrl-A and Ctrl-X, most users find it
+" confusing.
+set nrformats-=octal
+
+" Don't use Q for Ex mode, use it for formatting.  Except for Select mode.
+map Q gq
+sunmap Q
+
+" CTRL-U in insert mode deletes a lot.  Use CTRL-G u to first break undo,
+" so that you can undo CTRL-U after inserting a line break.
+" Revert with ":iunmap <C-U>".
+inoremap <C-U> <C-G>u<C-U>
+
+" In many terminal emulators the mouse works just fine.  By enabling it you
+" can position the cursor, Visually select and scroll with the mouse.
+if has('mouse')
+  set mouse=a
+endif
+
+" When editing a file, always jump to the last known cursor position.
+" Don't do it when the position is invalid, when inside an event handler
+" (happens when dropping a file on gvim) and for a commit message (it's
+" likely a different one than last time).
+autocmd BufReadPost *
+  \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+  \ |   exe "normal! g`\""
+  \ | endif
+
+" Syntax highlighting is ok in 2023
+syntax on
+
+" Convenient command to see the difference between the current buffer and the
+" file it was loaded from, thus the changes you made.
+" Only define it when not defined already.
+" Revert with: ":delcommand DiffOrig".
+if !exists(":DiffOrig")
+  command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis
+          \ | wincmd p | diffthis
+endif
+
+if has('langmap') && exists('+langremap')
+  " Prevent that the langmap option applies to characters that result from a
+  " mapping.  If set (default), this may break plugins (but it's backward
+  " compatible).
+  set nolangremap
+endif
+
+if has ('nvim')
+  " Set cursor style to a block for all modes (default is a thin line in
+  " insert mode)
+  set guicursor=n-v-c-i:block
+endif
+
+" Don't show line numbers on the left when using via `less.vim`
+func LessInitFunc()
+  set nonumber
+endfunc
+
+" Same thing for diff mode, line numbers don't really work well there
+if &diff
+  set nonumber
+endif
+
+" Setup term color support. Solarized colors are setup for sixteen color
+" terminal
+if !has ('nvim')
+  set t_Co=16                   " Unsupported in neovim
+endif
+
+" Uncomment this, if terminal is not 24-bit color capable - then the RGB color
+" values will not be rendered correctly.
+"set notermguicolors             " don't use 24-bit colors in terminal
+
+" This is a recreation of the default vim colorscheme, adjusted for a
+" 16-color Solarized palette.
+"
+" All highlights are listed instead of only changed ones, because neovim
+" insists on always using minimum of 256-color mode, if it's supported in
+" terminal capabilities entry for current TERM. This way, all common TERM
+" values are supported and terminal can be in 24-bit color support mode.
+"
+set background=light
+hi Search       cterm=none ctermfg=0 ctermbg=3 gui=none guifg=#073642 guibg=#b58900
+hi NonText      cterm=none ctermfg=13 gui=none guifg=#6c71c4
+hi SpecialKey   cterm=none ctermfg=4 gui=none guifg=#268bd2
+hi Directory    cterm=none ctermfg=4 gui=none guifg=#268bd2
+hi ErrorMsg     cterm=none ctermfg=15 ctermbg=1 gui=none guifg=#fdf6e3 guibg=#dc322f
+hi IncSearch    cterm=reverse gui=reverse
+hi MoreMsg      cterm=none ctermfg=2 gui=none guifg=#859900
+hi ModeMsg      cterm=bold gui=bold
+hi LineNr       cterm=none ctermfg=11 ctermbg=0 gui=none guifg=#657b83 guibg=#073642
+hi CursorLineNr cterm=none ctermfg=7 ctermbg=4 gui=none guifg=#eee8d5 guibg=#268bd2
+hi Question     cterm=none ctermfg=2 gui=none guifg=#859900
+hi StatusLine   cterm=bold,reverse gui=bold,reverse
+hi StatusLineNC cterm=reverse gui=reverse
+hi VertSplit    cterm=reverse gui=reverse
+hi Title        cterm=none ctermfg=5 gui=none guifg=#d33682
+hi Visual       cterm=none ctermbg=7 gui=none guibg=#eee8d5
+hi WarningMsg   cterm=none ctermfg=1 gui=none guifg=#dc322f
+hi WildMenu     cterm=none ctermfg=0 ctermbg=3 gui=none guifg=#073642 guibg=#b58900
+hi Folded       cterm=none ctermfg=4 ctermbg=7 gui=none guifg=#268bd2 guibg=#eee8d5
+hi FoldColumn   cterm=none ctermfg=4 ctermbg=7 gui=none guifg=#268bd2 guibg=#eee8d5
+hi DiffAdd      cterm=none ctermfg=0 ctermbg=2 gui=none guifg=#073642 guibg=#859900
+hi DiffChange   cterm=none ctermfg=0 ctermbg=2 gui=none guifg=#073642 guibg=#859900
+hi DiffDelete   cterm=none ctermfg=0 ctermbg=9 gui=none guifg=#073642 guibg=#cb4b16
+hi DiffText     cterm=bold ctermfg=0 ctermbg=2 gui=bold guifg=#073642 guibg=#859900
+hi SignColumn   cterm=none ctermfg=4 ctermbg=7 gui=none guifg=#268bd2 guibg=#eee8d5
+hi Conceal      cterm=none ctermfg=7 ctermbg=8 gui=none guifg=#eee8d5 guibg=#002b36
+hi SpellBad     cterm=none ctermbg=9 gui=none guibg=#cb4b16
+hi SpellCap     cterm=none ctermbg=12 gui=none guibg=#839496
+hi SpellRare    cterm=none ctermfg=0 ctermbg=13 gui=none guifg=#073642 guibg=#6c71c4
+hi SpellLocal   cterm=none ctermbg=6 gui=none guibg=#2aa198
+hi Pmenu        cterm=none ctermfg=13 ctermbg=0 gui=none guifg=#6c71c4 guibg=#073642
+hi PmenuSel     cterm=bold ctermfg=0 ctermbg=13 gui=bold guifg=#073642 guibg=#6c71c4
+hi PmenuSbar    cterm=none ctermbg=7 gui=none guibg=#eee8d5
+hi PmenuThumb   cterm=none ctermbg=0 gui=none guibg=#073642
+hi TabLine      cterm=underline ctermfg=0 ctermbg=7 gui=underline guifg=#073642 guibg=#eee8d5
+hi TabLineSel   cterm=bold gui=bold
+hi TabLineFill  cterm=reverse gui=reverse
+hi CursorColumn cterm=none ctermbg=7 gui=none guibg=#eee8d5
+hi CursorLine   cterm=underline gui=underline
+hi ColorColumn  cterm=none ctermbg=9 gui=none guibg=#cb4b16
+hi MatchParen   cterm=none ctermfg=0 ctermbg=6 gui=none guifg=#073642 guibg=#2aa198
+hi Error        cterm=none ctermfg=15 ctermbg=9 gui=none guifg=#fdf6e3 guibg=#cb4b16
+hi Comment      cterm=none ctermfg=4 gui=none guifg=#268bd2
+hi Constant     cterm=none ctermfg=1 gui=none guifg=#dc322f
+hi Special      cterm=none ctermfg=5 gui=none guifg=#d33682
+hi Identifier   cterm=none ctermfg=6 gui=none guifg=#2aa198
+hi Statement    cterm=none ctermfg=3 gui=none guifg=#b58900
+hi PreProc      cterm=none ctermfg=5 gui=none guifg=#d33682
+hi Type         cterm=none ctermfg=2 gui=none guifg=#859900
+hi Underlined   cterm=none cterm=underline ctermfg=5 gui=underline guifg=#d33682
+hi Ignore       cterm=none ctermfg=15 gui=none guifg=#fdf6e3
+hi Todo         cterm=none ctermfg=0 ctermbg=11 gui=none guifg=#073642 guibg=#657b83
+hi! link EndOfBuffer    NonText
+hi! link CurSearch      Search
+hi! link CursorLineSign SignColumn
+hi! link CursorLineFold FoldColumn
+hi! link QuickFixLine   Search
+hi! link String         Constant
+hi! link Character      Constant
+hi! link Number         Constant
+hi! link Boolean        Constant
+hi! link Float          Number
+hi! link Function       Identifier
+hi! link Conditional    Statement
+hi! link Repeat         Statement
+hi! link Label          Statement
+hi! link Operator       Statement
+hi! link Keyword        Statement
+hi! link Exception      Statement
+hi! link Include        PreProc
+hi! link Define         PreProc
+hi! link Macro          PreProc
+hi! link PreCondit      PreProc
+hi! link StorageClass   Type
+hi! link Structure      Type
+hi! link Typedef        Type
+hi! link Tag            Special
+hi! link SpecialChar    Special
+hi! link Delimiter      Special
+hi! link SpecialComment Special
+hi! link Debug          Special
+
+if has('nvim')
+  hi clear NvimInternalError
+  hi! link NvimInternalError Error
+endif
+
+" Local modifications (read: ugly hacks)
+if filereadable(expand('~/.vimrc.local'))
+  source ~/.vimrc.local
+endif

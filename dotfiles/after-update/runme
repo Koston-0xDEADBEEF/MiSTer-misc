@@ -1,0 +1,22 @@
+#!/usr/bin/env zsh
+
+# Copy ssh pubkey in place
+[[ -d /root/.ssh ]] || mkdir /root/.ssh
+chmod 750 /root/.ssh
+cp data/authorized_keys /root/.ssh
+
+# Enable zsh on login
+cp data/.bash_profile /root/
+
+# Map caps lock to control
+cp data/us-caps2ctrl.map.gz /usr/share/keymaps/i386/qwerty/
+loadkeys us-caps2ctrl
+
+# Copy actual .profile in place with creds n shitz
+cp data/.profile /root/
+
+# Disable password authentication from SSH daemon
+cp data/sshd_config /etc/ssh/sshd_config
+
+# Mister-kun login banner
+cp data/mister-kun.txt /etc/motd

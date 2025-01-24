@@ -1,0 +1,17 @@
+# Host specific modifications
+
+# less(1) output styling for certain terminal attributes, most commonly seen in
+# man pages
+local less_md=$S_fg[cyan]           # Bold
+local less_us=$S_fg[white]          # Underline
+#local less_so=$S_fg[colorname]      # Standout/reverse
+
+# Hostname color in shell prompt
+local prompt_h=$S_color_num[cyan]
+
+# Hostname color in Tmux (needs to be exported)
+export tmux_title_col=color$S_color_num[cyan]
+
+# Custom console keymap, switching Caps Lock to Control
+# Placed in /usr/share/keymaps/i386/qwerty/
+loadkeys us-caps2ctrl
